@@ -1,1 +1,2 @@
-FLASK_ENV=development
+FLASK_ENV=developmentt
+FLASK_DEBUG=True
