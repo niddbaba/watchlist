@@ -78,24 +78,7 @@ def page_not_found(e):
     return render_template('404.html'), 404
 
 
-@app.route('/', methods=['GET', 'POST'])
-def index():
-    if request.method == 'POST':
-        title = request.form.get('title')  # 请求的结果是一个字典，所以用get返回值
-        year = request.form.get('year')
-        if not title or not year or len(year) > 4 or len(title) > 60:
-            flash('Invalid input.')
-            return redirect(url_for('index'))
-        movie = Movie(title=title, year=year)
-        db.session.add(movie)
-        db.session.commit()
-        flash('Item Created.')
-        return redirect(url_for('index'))
-    movies = Movie.query.all()
-    return render_template('index.html', movies=movies)
-
-
-@app.route('movie/edit/<int:movie_id>', methods=['GET', 'POST'])
+@app.route('/movie/edit/<int:movie_id>', methods=['GET', 'POST'])
 def edit(movie_id):
     movie = Movie.query.get_or_404(movie_id)
 
@@ -114,6 +97,23 @@ def edit(movie_id):
         return redirect(url_for('index'))  # 重定向回主页
 
     return render_template('edit.html', movie=movie)  # 传入被编辑的电影记录
+
+
+@app.route('/', methods=['GET', 'POST'])
+def index():
+    if request.method == 'POST':
+        title = request.form.get('title')  # 请求的结果是一个字典，所以用get返回值
+        year = request.form.get('year')
+        if not title or not year or len(year) > 4 or len(title) > 60:
+            flash('Invalid input.')
+            return redirect(url_for('index'))
+        movie = Movie(title=title, year=year)
+        db.session.add(movie)
+        db.session.commit()
+        flash('Item Created.')
+        return redirect(url_for('index'))
+    movies = Movie.query.all()
+    return render_template('index.html', movies=movies)
 
 
 @app.route('/movie/delete/<int:movie_id>', methods=['POST'])  # 限定只接受 POST 请求
